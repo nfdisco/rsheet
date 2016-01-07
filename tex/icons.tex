@@ -1,0 +1,77 @@
+% \documentclass[a4paper]{article}
+\usepackage{mathtools}
+\usepackage{tikz}
+
+% \drawarray{rows}{cols}{xdim}{xdim-shift}
+\newcommand{\drawarray}[4]{%
+  \draw (0,0) grid (#2,#1);
+  \ifnum #3 > 0
+  \foreach \x in {1,...,#3}
+  \draw[xshift=#4 *\x cm, yshift=#4 *\x cm] (0,#1) -- (#2,#1) -- (#2,0);
+  \fi}
+
+% \drawtable{rows}{cols}{xdim}{xdim-shift}
+\newcommand{\drawtable}[4]{%
+  \drawarray{#1}{#2-1}{#3}{#4}
+  \draw (-1,0) grid (0,#1-1);
+  \draw (-1,#1-1) -- (0,#1);}
+
+% \drawfactor{rows}
+\newcommand{\drawfactor}[1]{%
+  \drawarray{#1}{1}{0}{0}
+  \draw (0,0) -- (1,1);}
+
+% \drawdataframe{rows}{cols}
+\newcommand{\drawdataframe}[2]{%
+  \foreach \x [count=\xi] in {#2}{
+    \if\x f
+    \draw (\xi-1,0) -- (\xi,1);
+    \draw (\xi-1,1) -- (\xi,1);
+    \fi
+  };
+  \draw (0,0) grid [ystep=#1-1] (\xi,#1-1);
+  \draw (0,#1-1) rectangle (\xi,#1);}
+
+\newcommand{\drawaxes}{%
+  \draw[->] (0,0) -- (0,2);
+  \draw[->] (0,0) -- (2,0);
+  \draw[->] (0,0) -- (1.5,1.5);}
+
+\def\iconscale{.23}             % scale factor
+\def\extradimsep{.2}            % separation for extra dimensions in cm
+\def\mathbaselineshift{-.6ex}   % adjust baseline in math mode
+
+\newcommand{\deficon}[3]{%
+  \DeclareRobustCommand{#1}[#2]{%
+  \ifmmode                      % needs \DeclareRobustCommand
+  \def\iconbaseline{%
+    \pgfpointadd{\pgfpointanchor{current bounding box}{center}}%
+    {\pgfpoint{0}{\mathbaselineshift}}}%
+  \,
+  \else
+  \def\iconbaseline{\pgfpointanchor{current bounding box}{south}}%
+  \fi
+  \begin{tikzpicture}[semithick]
+    \pgftransformscale{\iconscale}
+    #3
+    \pgfsetbaselinepointlater{\iconbaseline}%
+  \end{tikzpicture}%
+  \ifmmode\,\fi
+  }}
+
+\deficon{\Array}{3}{\drawarray{#1}{#2}{#3}{\extradimsep}}
+\deficon{\Table}{3}{\drawtable{#1}{#2}{#3}{\extradimsep}}
+\deficon{\Factor}{1}{\drawfactor{#1}}
+\deficon{\Dataframe}{2}{\drawdataframe{#1}{#2}}
+\deficon{\Axes}{0}{\drawaxes{}}
+
+\newcommand{\List}[1]{\Big[#1\Big]}
+
+% use these when using icons in in-line math to get a better baseline
+\newcommand{\nodepth}[1]{{\raisebox{\depth}{#1}}}
+\newcommand{\descenderdepth}[1]{%
+  \raisebox{\dimexpr\depth-\fontchardp\font`y}{#1}}
+
+% \begin{document}
+
+% \end{document}

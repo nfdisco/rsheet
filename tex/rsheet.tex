@@ -1,0 +1,247 @@
+% rsheet.tex - R reference sheet
+%
+% Permission is granted to copy, distribute and/or modify this document under
+% the terms of the GNU Free Documentation License, Version 1.3 or any later
+% version published by the Free Software Foundation; with no Invariant
+% Sections, no Front-Cover Texts, and no Back-Cover Texts.  A copy of the
+% license is included in the file named ``LICENSE''.
+%
+% Acknowledgments:
+%
+% The page layout is based on Winston Chang's LaTeX cheat sheet.  Thanks to
+% the folks at tex.SE for their help with the TeX code.
+%
+\documentclass[a4paper,landscape]{article}
+\usepackage{multicol}
+\usepackage[landscape]{geometry}
+\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm}
+
+\input{icons.tex}
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+\makeatother
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\pagestyle{empty}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+
+\newcommand{\Maps}{\;\;\rightarrow \;\;}
+
+\begin{document}
+
+\raggedright
+\small
+
+\begin{multicols*}{3}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+
+\begin{center}
+  \Large{\textbf{
+      A Visual Guide \\ to Split-Apply-Combine in R}} \\
+\end{center}
+
+\section{Legend}
+The symbols used in this document are as follows:\\
+\begin{tabular}{ll}
+  \Factor{3}
+  & Factor \\
+  \Array{3}{1}{0} \Array{3}{2}{0} \Array{2}{2}{2}
+  & Vector or array \\
+  \Table{3}{3}{0} \Table{2}{2}{2}
+  & Table \\
+  \Dataframe{3}{v,v} \Dataframe{3}{v,v,f} \Dataframe{2}{v,v}
+  & Data-frame \\
+  \nodepth{$\!\List{\Dataframe{3}{v,v,v},\Factor{3},\Array{2}{1}{0},\dotsc}$}
+  & List
+\end{tabular}
+
+\section{Reshaping}
+
+\begin{description}
+
+\item[as.matrix] Coerces a data-frame to a matrix.
+\[
+\Dataframe{3}{v,v,v} \Maps \Array{3}{3}{0}
+\]
+
+\item[as.table] Coerces an array to a contingency table.
+\[
+\Array{3}{3}{0} \Maps \Table{3}{3}{0}
+\]
+
+\item[as.data.frame] Coerces an array or contingency table to a
+  data-frame.
+\begin{align*}
+  \Array{3}{3}{0} &\Maps \Dataframe{3}{v,v,v} \\
+  \Array{3}{3}{2} &\Maps \Dataframe{3}{v,v,v,v,v,v} \\
+  \Table{3}{3}{2} &\Maps \Dataframe{3}{f,f,f,v}
+\end{align*}
+
+\item[c] Coerces an array or contingency table to a vector.
+\[
+  \Array{3}{3}{2}\ \text{or}\ \Table{3}{3}{2} \Maps \Array{3}{1}{0}
+\]
+
+\item[unlist] Coerces a data-frame to a vector.
+  \[ \Dataframe{3}{v,v,v} \Maps \Array{3}{1}{0} \]
+
+\item[stack] Concatenates the columns of a data-frame into a single column
+  along with a factor.  Non-vector columns are dropped.
+  \[ \Dataframe{3}{v,v,v} \Maps \Dataframe{3}{v,f} \]
+
+\item[unstack] Reverses the effects of \verb!stack!.
+  \[ \Dataframe{3}{v,f} \Maps \Dataframe{3}{v,v,v} \]
+
+\end{description}
+
+\section{Splitting}
+
+\begin{description}
+
+\item[as.list] Coerces a data-frame to a list of vectors.
+  \begin{align*}
+    \Array{3}{3}{2} &\Maps \List{\Array{1}{1}{0},\Array{1}{1}{0},\dots} \\
+    \Dataframe{3}{v,f,v}
+    &\Maps \List{\Array{3}{1}{0},\Factor{3},\Array{3}{1}{0}}
+  \end{align*}
+
+\item[split] Divides a vector or data-frame into the groups defined by a
+  factor.
+  \begin{align*}
+    \Array{3}{1}{0} + \Factor{3}
+    &\Maps \List{\Array{2}{1}{0},\Array{3}{1}{0},\dots} \\
+    \Dataframe{3}{v,v,v} + \Factor{3}
+    &\Maps \List{\Dataframe{2}{v,v,v},\Dataframe{3}{v,v,v},\dots}
+  \end{align*}
+
+\item[unstack] Splits a vector or the column of a data-frame into the groups
+  defined by a factor.
+  \begin{align*}
+    \Dataframe{3}{v,f}\ \text{or}\ \List{\Array{3}{1}{0},\Factor{3}}
+    &\Maps \List{\Array{2}{1}{0},\Array{3}{1}{0},\dots}
+  \end{align*}
+
+\end{description}
+
+\section{Applying}
+
+Some of the following functions may return an array instead of a list
+depending on the output of $f$.
+
+\begin{description}
+
+\item[tapply] Applies a function to each cell of a ragged array.
+  \[
+  \Array{3}{1}{0} + \List{\Factor{3},\Factor{3},\dots} + f
+  \Maps \List{f\Big(\Array{3}{1}{0}\Big),f\big(\Array{2}{1}{0}\big),\dots}
+  \]
+
+\item[apply] Applies a function to margins of an array.
+  \begin{align*}
+    \Array{2}{2}{2} + \Axes + f 
+    &\Maps
+      \List{f\big(\Array{2}{1}{2}\big),f\big(\Array{2}{1}{2}\big),\dots}
+      \ \text{or} \\
+    &\Maps
+      \List{f\big(\Array{1}{2}{2}\big),f\big(\Array{1}{2}{2}\big),\dots}
+      \ \text{or} \\
+    &\Maps
+      \List{f\big(\Array{2}{2}{0}\big),f\big(\Array{2}{2}{0}\big),\dots}
+  \end{align*}
+
+\item[lapply] Applies a function over a list or vector.
+  \begin{align*}
+    \Array{3}{1}{0} + f
+    &\Maps
+      \List{f\big(\Array{1}{1}{0}\big),f\big(\Array{1}{1}{0}\big),\dots} \\
+    \List{\Array{3}{1}{0},\Array{2}{2}{0},\dots} + f
+    &\Maps
+      \List{f\Big(\Array{3}{1}{0}\Big),f\big(\Array{2}{2}{0}\big),\dots}
+  \end{align*}
+
+\end{description}
+
+\section{Combining}
+
+\begin{description}
+
+\item[rbind] Combines a sequence of vectors, arrays or data-frames by rows.
+  \begin{align*}
+    \Array{2}{3}{0} + \Array{1}{3}{0} + \cdots &\Maps \Array{3}{3}{0} \\
+    \Dataframe{2}{v,v,v} + \Dataframe{2}{v,v,v} + \cdots
+                                               &\Maps \Dataframe{3}{v,v,v}
+  \end{align*}
+
+\item[cbind] Combines a sequence of vectors, arrays or data-frames by
+  columns.
+  \begin{align*}
+    \Array{3}{2}{0} + \Array{3}{1}{0} + \cdots &\Maps \Array{3}{3}{0} \\
+    \Dataframe{3}{v,f} + \Dataframe{3}{f,v} + \cdots
+                                               &\Maps \Dataframe{3}{v,f,f,v}
+  \end{align*}
+
+\item[simplify2array] Combines a list of arrays into a single array by
+  adding more dimensions.
+  \[ \List{\Array{3}{3}{0},\Array{3}{3}{0},\dots} \Maps \Array{3}{3}{2} \]
+
+\item[unlist] Coerces a list of arrays to a vector.
+  \[ \List{\Array{3}{2}{0},\Array{2}{2}{0},\dots} \Maps \Array{3}{1}{0} \]
+
+\item[as.data.frame] Coerces a list of vectors to a data-frame.
+  \[
+  \List{\Array{3}{1}{0},\Factor{3},\Array{3}{1}{0},\dots} \Maps
+  \Dataframe{3}{v,f,v}
+  \]
+
+\item[stack] Coerces a sequence of vectors into a single-column data-frame
+  along with a factor.
+  \[ \List{\Array{3}{1}{0},\Array{2}{1}{0},\dots} \Maps \Dataframe{3}{v,f} \]
+
+\item[unsplit] Combines a sequence of vectors or data-frames into a single
+  vector or data-frame by interleaving rows according to a factor.
+  \begin{align*}
+    \List{\Array{3}{1}{0},\Array{2}{1}{0},\dots} + \Factor{3}
+    &\Maps \Array{3}{1}{0} \\
+    \List{\Dataframe{3}{v,f,v},\Dataframe{2}{v,f,v},\dots} + \Factor{3}
+    &\Maps \Dataframe{3}{v,f,v}
+  \end{align*}
+
+\item[merge] Merges two data-frames by common columns.
+  \[ \Dataframe{3}{f,v,v} + \Dataframe{3}{f,v} \Maps
+  \Dataframe{3}{f,v,v,v} \]
+\end{description}
+
+\vfill
+\vrule width3cm height.5pt
+
+\scriptsize
+Version: 1.0 \\
+Copyright \copyright\ 2016 Ernest Adrogu\'e Calveras. \\
+Permission is granted to copy, distribute and/or modify this document under
+the terms of the GNU Free Documentation License, Version 1.3 or any later
+version published by the Free Software Foundation.
+
+
+\end{multicols*}
+
+\end{document}
