@@ -92,11 +92,16 @@ The symbols used in this document are as follows:\\
 \item[as.data.frame] Coerces an array or contingency table to a
   data-frame.
 \begin{align*}
-  \Array{3}{3}{0} &\Maps \Dataframe{3}{v,v,v} \\
+  % \Array{3}{3}{0} &\Maps \Dataframe{3}{v,v,v} \\
   \Array{3}{3}{2} &\Maps \Dataframe{3}{v,v,v,v,v,v} \\
   \Table{3}{3}{2} &\Maps \Dataframe{3}{f,f,f,v}
 \end{align*}
 
+\item[xtabs] Coerces a data-frame to a contingency table.
+\[
+\Dataframe{3}{f,f,f,v} \Maps \Table{3}{3}{2}
+\]
+ 
 \item[c] Coerces an array or contingency table to a vector.
 \[
   \Array{3}{3}{2}\ \text{or}\ \Table{3}{3}{2} \Maps \Array{3}{1}{0}
