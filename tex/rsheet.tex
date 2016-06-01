@@ -43,6 +43,7 @@
 \setlength{\parskip}{0pt plus 0.5ex}
 
 \newcommand{\Maps}{\;\;\rightarrow \;\;}
+\newcommand{\Switches}{\;\;\leftrightarrow \;\;}
 
 \begin{document}
 
@@ -99,7 +100,12 @@ A list is denoted by square brackets: $\List{\dotsc}$.
 \[
 \Dataframe{3}{f,f,f,v} \Maps \Table{3}{3}{2}
 \]
- 
+
+\item[reshape] Reshapes a data-frame between `wide' and `long' format.
+\[
+  \Dataframe{3}{f,v,v,v,v} \Switches \Dataframe{4}{f,v,v}
+\]
+
 \item[c] Coerces an array or contingency table to a vector.
 \[
   \Array{3}{3}{2}\ \text{or}\ \Table{3}{3}{2} \Maps \Array{3}{1}{0}
