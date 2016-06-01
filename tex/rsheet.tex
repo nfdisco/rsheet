@@ -61,19 +61,17 @@
 \end{center}
 
 \section{Legend}
-The symbols used in this document are as follows:\\
-\begin{tabular}{ll}
-  \Factor{3}
-  & Factor \\
-  \Array{3}{1}{0} \Array{3}{2}{0} \Array{2}{2}{2}
-  & Vector or array \\
-  \Table{3}{3}{0} \Table{2}{2}{2}
-  & Table \\
-  \Dataframe{3}{v,v} \Dataframe{3}{v,v,f} \Dataframe{2}{v,v}
-  & Data-frame \\
-  \nodepth{$\!\List{\Dataframe{3}{v,v,v},\Factor{3},\Array{2}{1}{0},\dotsc}$}
-  & List
+Symbols used in this document:
+\par\smallskip
+\def\iconscale{.15}
+\begin{tabular}{llll}
+  \Array{3}{1}{0} & vector/array & \Array{3}{3}{0} & matrix \\
+  \Array{3}{2}{1} & array & \Table{3}{3}{0} & contingency table \\
+  \Factor{3} & factor & \Dataframe{3}{v,v,v} & data-frame
 \end{tabular}
+\def\iconscale{.23}
+
+A list is denoted by square brackets: $\List{\dotsc}$.
 
 \section{Reshaping}
 
