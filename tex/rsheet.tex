@@ -64,13 +64,13 @@
 \section{Legend}
 Symbols used in this document:
 \par\smallskip
-\def\iconscale{.15}
+\def\iconscale{.21}
 \begin{tabular}{llll}
   \Array{3}{1}{0} & vector/array & \Array{3}{3}{0} & matrix \\
   \Array{3}{2}{1} & array & \Table{3}{3}{0} & contingency table \\
   \Factor{3} & factor & \Dataframe{3}{v,v,v} & data-frame
 \end{tabular}
-\def\iconscale{.23}
+\def\iconscale{.21}
 
 A list is denoted by square brackets: $\List{\dotsc}$.
 
@@ -91,8 +91,7 @@ A list is denoted by square brackets: $\List{\dotsc}$.
 \item[as.data.frame] Coerces an array or contingency table to a
   data-frame.
 \begin{align*}
-  % \Array{3}{3}{0} &\Maps \Dataframe{3}{v,v,v} \\
-  \Array{3}{3}{2} &\Maps \Dataframe{3}{v,v,v,v,v,v} \\
+  \Array{3}{3}{2} &\Maps \Dataframe{3}{v,v,v,v,v} \\
   \Table{3}{3}{2} &\Maps \Dataframe{3}{f,f,f,v}
 \end{align*}
 
@@ -154,39 +153,30 @@ A list is denoted by square brackets: $\List{\dotsc}$.
 
 \section{Applying}
 
-Some of the following functions may return an array instead of a list
-depending on the output of $f$.
+The following functions simplify the output to an array, if possible;
+otherwise they return a list.
 
 \begin{description}
 
-\item[tapply] Applies a function to each cell of a ragged array.
+\item[apply] Applies a function to margins of an array.
   \[
-  \Array{3}{1}{0} + \List{\Factor{3},\Factor{3},\dots} + f
-  \Maps \List{f\Big(\Array{3}{1}{0}\Big),f\big(\Array{2}{1}{0}\big),\dots}
+  \Array{2}{2}{2} + \Axes + f \Maps
+  \List{f\big(\Array{2}{2}{0}\big),f\big(\Array{2}{2}{0}\big),\dots}
   \]
 
-\item[apply] Applies a function to margins of an array.
-  \begin{align*}
-    \Array{2}{2}{2} + \Axes + f 
-    &\Maps
-      \List{f\big(\Array{2}{1}{2}\big),f\big(\Array{2}{1}{2}\big),\dots}
-      \ \text{or} \\
-    &\Maps
-      \List{f\big(\Array{1}{2}{2}\big),f\big(\Array{1}{2}{2}\big),\dots}
-      \ \text{or} \\
-    &\Maps
-      \List{f\big(\Array{2}{2}{0}\big),f\big(\Array{2}{2}{0}\big),\dots}
-  \end{align*}
+\item[tapply] Applies a function to each cell of a ragged array.
+  \[
+  \Array{3}{1}{0} + \Factor{3} + f
+  \Maps \List{f\big(\Array{2}{1}{0}\big),f(\Array{1}{1}{0}),\dots}
+  \]
 
-\item[lapply] Applies a function over a list or vector.
-  \begin{align*}
-    \Array{3}{1}{0} + f
-    &\Maps
-      \List{f\big(\Array{1}{1}{0}\big),f\big(\Array{1}{1}{0}\big),\dots} \\
-    \List{\Array{3}{1}{0},\Array{2}{2}{0},\dots} + f
-    &\Maps
-      \List{f\Big(\Array{3}{1}{0}\Big),f\big(\Array{2}{2}{0}\big),\dots}
-  \end{align*}
+\item[sapply] Applies a function over a list or vector.
+  \[
+  \List{\Array{3}{1}{0},\Array{2}{2}{0},\dots} + f \Maps
+  \List{f\Big(\Array{3}{1}{0}\Big),f\big(\Array{2}{2}{0}\big),\dots}
+  \]
+  Related functions, not covered here, include \verb!lapply! (does not
+  simplify) and \verb!mapply! (multivariate version).
 
 \end{description}
 
